@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -15,6 +14,7 @@ import (
 type Client struct {
 	client  *http.Client
 	BaseURL *url.URL
+	DC      string
 	APIKey  string
 }
 
@@ -22,10 +22,12 @@ func NewClient(apiKey string, client *http.Client) *Client {
 	if len(strings.Split(apiKey, "-")) != 2 {
 		panic("Mailchimp API Key must be formatted like: xyz-zys")
 	}
+	dc := strings.Split(apiKey, "-")[1]
 	if client == nil {
 		client = http.DefaultClient
 	}
-	return &Client{APIKey: apiKey, client: client}
+	baseUrl, _ := url.Parse(fmt.Sprintf("https://%s.api.mailchimp.com/3.0", dc))
+	return &Client{APIKey: apiKey, client: client, DC: dc, BaseURL: baseUrl}
 }
 
 type ErrorResponse struct {
@@ -61,8 +63,7 @@ func (c *Client) Do(method string, path string, body interface{}) (interface{}, 
 		}
 	}
 
-	dc := strings.Split(c.APIKey, "-")[1]
-	apiURL := fmt.Sprintf("https://%s.api.mailchimp.com/3.0%s", dc, path)
+	apiURL := fmt.Sprintf("%s%s", c.BaseURL.String(), path)
 
 	req, err := http.NewRequest(method, apiURL, buf)
 	if err != nil {
@@ -80,12 +81,9 @@ func (c *Client) Do(method string, path string, body interface{}) (interface{}, 
 	if err != nil {
 		return nil, err
 	}
-	for h, v := range resp.Header {
-		log.Printf("%s: %s", h, v)
-	}
 
 	var v interface{}
-	err = json.NewDecoder(resp.Body).Decode(v)
+	err = json.NewDecoder(resp.Body).Decode(&v)
 	if err != nil {
 		return nil, err
 	}

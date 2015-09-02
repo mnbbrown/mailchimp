@@ -15,8 +15,12 @@ func equals(t *testing.T, a interface{}, b interface{}) {
 	}
 }
 
-func TestSubscribe(t *testing.T) {
+func TestURL(t *testing.T) {
+	client := NewClient("a-lit11", nil)
+	equals(t, "https://lit11.api.mailchimp.com/3.0", client.BaseURL.String())
+}
 
+func TestSubscribe(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		rw.WriteHeader(200)
 		rw.Header().Set("Content-Type", "application/json")
@@ -31,5 +35,9 @@ func TestSubscribe(t *testing.T) {
 	}
 
 	client := NewClient("a-lit11", &http.Client{Transport: transport})
-	client.Subscribe("me@matthewbrown.io", "abc_test")
+	client.BaseURL, _ = url.Parse("http://localhost/")
+	_, err := client.Subscribe("me@matthewbrown.io", "abc_test")
+	if err != nil {
+		t.Fatal(err)
+	}
 }

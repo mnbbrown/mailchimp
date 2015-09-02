@@ -1,4 +1,4 @@
 image: mnbbrown/ci:latest
 script:
   - go get -t -v ./...
-  - go test
+  - go test -v -cover
