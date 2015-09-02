@@ -12,6 +12,7 @@ import (
 	"strings"
 )
 
+// A Client manages communication with the Mailchimp API.
 type Client struct {
 	client  *http.Client
 	BaseURL *url.URL
@@ -19,16 +20,18 @@ type Client struct {
 	APIKey  string
 }
 
-func NewClient(apiKey string, client *http.Client) (*Client, error) {
+// NewClient returns a new Mailchimp API client.  If a nil httpClient is
+// provided, http.DefaultClient will be used. The apiKey must be in the format xyz-us11.
+func NewClient(apiKey string, httpClient *http.Client) (*Client, error) {
 	if len(strings.Split(apiKey, "-")) != 2 {
 		return nil, errors.New("Mailchimp API Key must be formatted like: xyz-zys")
 	}
 	dc := strings.Split(apiKey, "-")[1]
-	if client == nil {
-		client = http.DefaultClient
+	if httpClient == nil {
+		httpClient = http.DefaultClient
 	}
 	baseUrl, _ := url.Parse(fmt.Sprintf("https://%s.api.mailchimp.com/3.0", dc))
-	return &Client{APIKey: apiKey, client: client, DC: dc, BaseURL: baseUrl}, nil
+	return &Client{APIKey: apiKey, client: httpClient, DC: dc, BaseURL: baseUrl}, nil
 }
 
 type ErrorResponse struct {

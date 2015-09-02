@@ -1,7 +1,9 @@
 image: mnbbrown/ci:latest
 script:
   - go get -t -v ./...
-  - go test -v -cover
+  - go get github.com/axw/gocov/gocov
+  - go get github.com/mattn/goveralls
+  - goveralls -v -service drone.io -repotoken $COVERALLS_TOKEN
 
 notify:
   slack:
