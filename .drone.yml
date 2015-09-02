@@ -3,7 +3,7 @@ script:
   - go get -t -v ./...
   - go get github.com/axw/gocov/gocov
   - go get github.com/mattn/goveralls
-  - goveralls -v -service drone.io -repotoken $COVERALLS_TOKEN
+  - /go/bin/goveralls -v -service drone.io -repotoken $COVERALLS_TOKEN
 
 notify:
   slack:
