@@ -3,6 +3,7 @@ package mailchimp
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -18,16 +19,16 @@ type Client struct {
 	APIKey  string
 }
 
-func NewClient(apiKey string, client *http.Client) *Client {
+func NewClient(apiKey string, client *http.Client) (*Client, error) {
 	if len(strings.Split(apiKey, "-")) != 2 {
-		panic("Mailchimp API Key must be formatted like: xyz-zys")
+		return nil, errors.New("Mailchimp API Key must be formatted like: xyz-zys")
 	}
 	dc := strings.Split(apiKey, "-")[1]
 	if client == nil {
 		client = http.DefaultClient
 	}
 	baseUrl, _ := url.Parse(fmt.Sprintf("https://%s.api.mailchimp.com/3.0", dc))
-	return &Client{APIKey: apiKey, client: client, DC: dc, BaseURL: baseUrl}
+	return &Client{APIKey: apiKey, client: client, DC: dc, BaseURL: baseUrl}, nil
 }
 
 type ErrorResponse struct {

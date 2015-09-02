@@ -2,3 +2,12 @@ image: mnbbrown/ci:latest
 script:
   - go get -t -v ./...
   - go test -v -cover
+
+notify:
+  slack:
+    webhook_url: 'https://hooks.slack.com/services/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'
+    username: 'drone'
+    channel: '#builds'
+    on_started: false
+    on_success: true
+    on_failure: true

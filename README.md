@@ -1,6 +1,6 @@
 # Mailchimp 
 
-An golang SDK for Golang API v3.
+A golang SDK for Mailchimp API v3.
 
 [![Build Status](https://ci.matthewbrown.io/api/badge/github.com/mnbbrown/mailchimp/status.svg?branch=master)](https://ci.matthewbrown.io/github.com/mnbbrown/mailchimp)
 
