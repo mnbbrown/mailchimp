@@ -18,7 +18,7 @@ import (
 
 func main() {
 
-    client := mailchimp.NewClient("apixyc-us11", nil)
+    client, err := mailchimp.NewClient("apixyc-us11", nil)
     _, err := client.Subscribe("me@matthewbrown.io", "listidxyz")
     if err != nil {
         panic(err)
