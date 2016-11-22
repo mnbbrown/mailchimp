@@ -101,3 +101,15 @@ func (c *Client) Subscribe(email string, listId string) (interface{}, error) {
 	}
 	return v, nil
 }
+
+func (c *Client) UpdateMemberName(email string, listId string, firstName string, lastName string) (interface{}, error) {
+	data := &map[string]interface{}{
+		"merge_fields": &map[string]interface{}{"FNAME": firstName, "LNAME": lastName},
+	}
+	userID := memberIDFromEmail(email)
+	v, err := c.Do("PATCH", fmt.Sprintf("/lists/%s/members/%s", listId, userID), data)
+	if err != nil {
+		return v, err
+	}
+	return v, nil
+}
