@@ -69,3 +69,25 @@ func TestSubscribe(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestUpdateMemberName(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		rw.WriteHeader(200)
+		rw.Header().Set("Content-Type", "application/json")
+		fmt.Fprintln(rw, `{"member_fields":{"FNAME":"bob","LNAME":"brown"}}`)
+	}))
+	defer server.Close()
+
+	transport := &http.Transport{
+		Proxy: func(req *http.Request) (*url.URL, error) {
+			return url.Parse(server.URL)
+		},
+	}
+
+	client, _ := NewClient("a-lit11", &http.Client{Transport: transport})
+	client.BaseURL, _ = url.Parse("http://localhost/")
+	_, err := client.UpdateMemberName("me@matthewbrown.io", "abc_test", "bob", "brown")
+	if err != nil {
+		t.Fatal(err)
+	}
+}
